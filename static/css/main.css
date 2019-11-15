@@ -3014,11 +3014,17 @@ body.mobile-nav-active #mobile-nav-toggle {
     color: white;
     font-size: 20px;
     position: absolute;
-    top: 90%;
+    padding: 10%;
+    top: 80%;
     left: 30%;
-    transform: translate(-50%, -50%);
+    transform: translate(-35%, -50%);
     -ms-transform: translate(-50%, -50%);
     text-align: center;
+    display: block;
+}
+
+.text_pet-info {
+        margin: 0;
 }
 
 .Volunteer-form-area .select-option .nice-select {
@@ -4021,6 +4027,12 @@ body.mobile-nav-active #mobile-nav-toggle {
 ################
 */
 
+.paginator {
+    margin-top: 30px;
+    text-align: center;
+}
+
+
 /* ################
     Стили для модальных окон питомцев и списка приютов
 ################ */
@@ -4299,7 +4311,7 @@ dropdown dropdown_animal {
     font-size: 14px;
     color: #474747;
     text-align: left;
-    margin: 2px;
+    margin: 20px;
     width: 600px;
 }
 
@@ -4307,7 +4319,10 @@ dropdown dropdown_animal {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+}
 
+.search-section-gap {
+    padding: 40px 0;
 }
 
 .search_input {
@@ -4322,7 +4337,7 @@ dropdown dropdown_animal {
 }
 
 .result {
-    width: 900px;
+    width: 75%;
 }
 
 .input_check {
@@ -4332,4 +4347,89 @@ dropdown dropdown_animal {
 
 .hidden {
     display: none;
+}
+
+
+/* ################
+    Стили для модального окна редактирования фото питомца
+################ */
+
+.modal-body_image {
+    padding: 0;
+}
+
+.telegram_icon {
+    height: 30px;
+    filter:invert(1);
+}
+
+.detail {
+    display: flex;
+    margin-bottom: 12px;
+}
+
+.row pt-120 pb-80 {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* ################
+    Стили для КАРУСЕЛИ ПИТОМЦЕВ на главной странице
+################ */
+
+.center_cropped a {
+  position: relative;
+  overflow: hidden;
+  height: 285px;
+  width: 320px;
+}
+
+.center_cropped img {
+  object-fit: cover;
+  object-position: center;
+}
+
+.single-image-carusel a {
+    display: flex;
+    justify-content: center;
+}
+
+.reserve_block {
+    display: flex;
+    justify-content: center;
+    margin: auto;
+}
+
+.reserve_pet_block {
+    margin: auto;
+}
+
+.button_admin {
+    background-color: #9DA2AA;
+    line-height: 42px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border: 1px solid transparent;
+    color: #fff;
+    display: inline-block;
+    font-weight: 500;
+    position: relative;
+    width: 240px;
+    margin: 15px;
+    text-align: center;
+}
+
+.button_admin_add {
+    background-color: #494D55;
+    line-height: 42px;
+    padding-left: 30px;
+    padding-right: 30px;
+    border: 1px solid transparent;
+    color: #fff;
+    display: inline-block;
+    font-weight: 500;
+    position: relative;
+    width: 240px;
+    margin: 15px;
+    text-align: center;
 }

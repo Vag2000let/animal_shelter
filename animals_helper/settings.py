@@ -58,6 +58,8 @@ INSTALLED_APPS = [
     'crispy_forms',
     'social_django',
     'django_extensions',
+    'reserveapp',
+    'shelteradminapp',
 ]
 
 
@@ -116,7 +118,7 @@ DATABASES = {
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 
-# AUTH_USER_MODEL = 'authapp.'
+#AUTH_USER_MODEL = 'authapp.models.User'
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'social_core.backends.vk.VKOAuth2',

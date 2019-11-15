@@ -1,16 +1,34 @@
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
+from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, ListView, DetailView
 from django.shortcuts import render, get_object_or_404
 
+from authapp.models import ActivateUser
 from mainapp.models import Pet, Shelter, PetCategory
+
+
+def check_user(request):
+    if request.user.is_authenticated:
+        user = get_object_or_404(ActivateUser, user=request.user)
+        if user.is_shelter != 'SHELTER' and user.is_shelter != 'USER':
+            return HttpResponseRedirect(reverse('auth:type_of_user'))
+        else:
+            return HttpResponseRedirect(reverse('main:index'))
+    else:
+        return HttpResponseRedirect(reverse('main:index'))
 
 
 class Index(TemplateView):
     """ Главная страница """
     template_name = 'mainapp/index.html'
+    pets_row = Pet.objects.all()
     adopted = Pet.get_count('Уже дома')
     extra_context = {
+        'pets_row': pets_row,
         'adopted': adopted,
         'pets': Pet.get_count() - adopted,
     }
@@ -38,21 +56,19 @@ class ShelterDetail(DetailView):
         context = super(DetailView, self).get_context_data(**kwargs)
         # Add in a QuerySet of all the pets
         context['pets_list'] = Pet.objects.all()
+        context['adopted'] = Pet.get_count('Уже дома')
+        context['not_adopted'] = Pet.get_count() - context['adopted']
         return context
 
 
 def shelter_card(request, pk):
+    """ страница приюта """
     shelter = get_object_or_404(Shelter, pk=pk)
     context = {
         'title': shelter.name,
         'shelter': shelter,
     }
     return render(request, 'mainapp/shelter_card.html', context)
-
-
-class PetList(ListView):
-    """ страница питомцев, нашедших дом """
-    model = Pet
 
 
 def get_year_output(year):
@@ -82,10 +98,11 @@ def get_month_output(month):
 
 
 def pet_card(request, pk):
+    """ страница питомца """
     pet = get_object_or_404(Pet, pk=pk)
 
     context = {
-        'title': 'карточка питомца',
+        'title': 'Карточка питомца',
         'pet_class': pet.pet_category,
         'pet': pet,
         'shelter': pet.pet_shelter,
@@ -96,9 +113,32 @@ def pet_card(request, pk):
 
 
 def pet_list(request, page=1):
-    title = 'СПИСОК ПИТОМЦЕВ'
+    """ страница всех питомцев """
+    title = 'Список питомцев'
     pets = Pet.objects.all()
     paginator = Paginator(pets, 4)
+    try:
+        pets_paginator = paginator.page(page)
+    except PageNotAnInteger:
+        pets_paginator = paginator.page(1)
+    except EmptyPage:
+        pets_paginator = paginator.page(paginator.num_pages)
+
+    adopted_pets = Pet.objects.filter(pet_status='22')
+
+    content = {
+        'title': title,
+        'pets': pets_paginator,
+        'adopted_pets': adopted_pets,
+    }
+    return render(request, 'mainapp/pets.html', content)
+
+
+def adopted_list(request, page=1):
+    """ страница всех питомцев, которые дома """
+    title = 'Список питомцев, которые уже нашли дом'
+    adopted_pets = Pet.objects.filter(pet_status='22')
+    paginator = Paginator(adopted_pets, 4)
     try:
         pets_paginator = paginator.page(page)
     except PageNotAnInteger:
@@ -109,12 +149,14 @@ def pet_list(request, page=1):
     content = {
         'title': title,
         'pets': pets_paginator,
+        'adopted_pets': adopted_pets,
     }
-    return render(request, 'mainapp/pets.html', content)
+    return render(request, 'mainapp/adopted.html', content)
 
 
 def cat_list(request, page=1):
-    title = 'СПИСОК ПИТОМЦЕВ'
+    """ страница только котов """
+    title = 'Список питомцев'
     cats = Pet.objects.filter(pet_category_id=5)
     pet_class = PetCategory.objects.get(id=5)
     content = {
@@ -126,7 +168,8 @@ def cat_list(request, page=1):
 
 
 def dog_list(request, page=1):
-    title = 'СПИСОК ПИТОМЦЕВ'
+    """ страница только собак """
+    title = 'Список питомцев'
     dogs = Pet.objects.filter(pet_category_id=6)
     pet_class = PetCategory.objects.get(id=6)
     content = {
